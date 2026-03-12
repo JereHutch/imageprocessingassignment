@@ -1,0 +1,19 @@
+import cv2
+import numpy as np
+
+image = cv2.imread("imagefp.jpg")
+
+if image is None:
+    print("Error: Image not found.")
+    exit()
+
+B, G, R = cv2.split(image)
+
+bw = ((R.astype(int) + G.astype(int) + B.astype(int)) / 3).astype(np.uint8)
+
+bw_image = cv2.merge([bw, bw, bw])
+
+cv2.imwrite("bwimage.png", bw_image)
+
+print("Black and white image saved successfully.")
+
