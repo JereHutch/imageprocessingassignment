@@ -1,19 +1,95 @@
 import cv2
 import numpy as np
 
+# -----------------------------
+# Task 1: Convert to Black & White
+# -----------------------------
+
 image = cv2.imread("imagefp.jpg")
 
 if image is None:
     print("Error: Image not found.")
     exit()
 
+# Split color channels
 B, G, R = cv2.split(image)
 
+# Average RGB values
 bw = ((R.astype(int) + G.astype(int) + B.astype(int)) / 3).astype(np.uint8)
 
+# Merge back to 3-channel image
 bw_image = cv2.merge([bw, bw, bw])
 
+# Save result
 cv2.imwrite("bwimage.png", bw_image)
+print("Black and white image saved.")
 
-print("Black and white image saved successfully.")
 
+# -----------------------------
+# Convert to true grayscale
+# -----------------------------
+
+gray = cv2.imread("bwimage.png", cv2.IMREAD_GRAYSCALE)
+
+
+# -----------------------------
+# Task 2: Gaussian Blur
+# -----------------------------
+
+blur7 = cv2.GaussianBlur(gray, (7,7), 0)
+blur15 = cv2.GaussianBlur(gray, (15,15), 3)
+blur25 = cv2.GaussianBlur(gray, (25,25), 5)
+
+cv2.imwrite("gaussian7.png", blur7)
+cv2.imwrite("gaussian15.png", blur15)
+cv2.imwrite("gaussian25.png", blur25)
+
+print("Gaussian blur images saved.")
+
+
+# -----------------------------
+# Task 3: Thresholding
+# -----------------------------
+
+threshold_value = 120
+
+_, threshold_image = cv2.threshold(gray, threshold_value, 255, cv2.THRESH_BINARY)
+
+cv2.imwrite("threshold.png", threshold_image)
+
+print("Threshold image saved.")
+
+
+# -----------------------------
+# Task 4: Prewitt Edge Detection
+# -----------------------------
+
+# Prewitt horizontal kernel
+prewitt_x = np.array([
+    [-1,0,1],
+    [-1,0,1],
+    [-1,0,1]
+])
+
+# Prewitt vertical kernel
+prewitt_y = np.array([
+    [-1,-1,-1],
+    [0,0,0],
+    [1,1,1]
+])
+
+# Apply filters
+horizontal_edges = cv2.filter2D(gray, -1, prewitt_x)
+vertical_edges = cv2.filter2D(gray, -1, prewitt_y)
+
+# Absolute values
+horizontal_edges = np.abs(horizontal_edges)
+vertical_edges = np.abs(vertical_edges)
+
+# Save results
+cv2.imwrite("prewitt_horizontal.png", horizontal_edges)
+cv2.imwrite("prewitt_vertical.png", vertical_edges)
+
+print("Prewitt edge detection images saved.")
+
+print("All processing complete.")
